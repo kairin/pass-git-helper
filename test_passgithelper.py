@@ -64,7 +64,9 @@ class TestSkippingDataExtractor:
             super().__init__(skip_characters)
 
         def _get_raw(
-            self, entry_text: Text, entry_lines: Sequence[Text]  # noqa: ARG002
+            self,
+            entry_text: Text,  # noqa: ARG002
+            entry_lines: Sequence[Text],
         ) -> Optional[Text]:
             return entry_lines[0]
 

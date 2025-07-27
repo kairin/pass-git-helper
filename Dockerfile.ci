@@ -1,0 +1,28 @@
+# Dockerfile for local CI/CD testing
+FROM python:3.13-slim
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory
+WORKDIR /app
+
+# Copy requirements first for better caching
+COPY requirements-dev.txt .
+COPY setup.py .
+COPY pyproject.toml .
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements-dev.txt
+
+# Copy source code
+COPY . .
+
+# Install the package in development mode
+RUN pip install -e .
+
+# Default command runs the full CI pipeline
+CMD ["python", "-m", "pytest", "test_passgithelper.py", "-v"]

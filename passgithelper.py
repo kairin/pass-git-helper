@@ -5,7 +5,6 @@
 .. codeauthor:: Johannes Wienke
 """
 
-
 import abc
 import argparse
 import configparser
@@ -237,7 +236,9 @@ class SpecificLineExtractor(SkippingDataExtractor):
         )
 
     def _get_raw(
-        self, entry_name: Text, entry_lines: Sequence[Text]  # noqa: ARG002
+        self,
+        entry_name: Text,  # noqa: ARG002
+        entry_lines: Sequence[Text],
     ) -> Optional[Text]:
         if len(entry_lines) > self._line:
             return entry_lines[self._line]
@@ -281,7 +282,9 @@ class RegexSearchExtractor(DataExtractor):
         )
 
     def get_value(
-        self, entry_name: Text, entry_lines: Sequence[Text]  # noqa: ARG002
+        self,
+        entry_name: Text,  # noqa: ARG002
+        entry_lines: Sequence[Text],
     ) -> Optional[Text]:
         """See base class method."""
         # Search through all lines and return the first matching one
@@ -300,7 +303,9 @@ class EntryNameExtractor(DataExtractor):
         """Configure nothing."""
 
     def get_value(
-        self, entry_name: Text, entry_lines: Sequence[Text]  # noqa: ARG002
+        self,
+        entry_name: Text,
+        entry_lines: Sequence[Text],  # noqa: ARG002
     ) -> Optional[Text]:
         """See base class method."""
         return os.path.split(entry_name)[1]
