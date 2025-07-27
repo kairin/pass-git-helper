@@ -66,11 +66,11 @@ else
 fi
 
 # Step 5: Security checks
-print_status "Running security checks..."
-if python -m safety scan; then
+print_status "Running comprehensive security checks..."
+if ./scripts/security-scan.sh; then
     print_success "Security checks passed"
 else
-    print_error "Security vulnerabilities found"
+    print_error "Security checks failed"
     exit 1
 fi
 

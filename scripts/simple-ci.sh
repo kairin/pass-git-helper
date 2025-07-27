@@ -38,7 +38,7 @@ if [[ ! -d ".venv" ]]; then
 fi
 source .venv/bin/activate
 pip install -e . > /dev/null 2>&1
-pip install pytest pytest-mock pytest-cov ruff build > /dev/null 2>&1
+pip install pytest pytest-mock pytest-cov ruff build pip-audit bandit > /dev/null 2>&1
 print_success "Python environment ready"
 
 # Step 2: Code formatting
@@ -64,12 +64,25 @@ else
     exit 1
 fi
 
-# Step 5: Test coverage
+# Step 5: Basic security checks
+print_status "Running basic security checks..."
+if command -v pip-audit &> /dev/null; then
+    if pip-audit --format=columns > /dev/null 2>&1; then
+        print_success "Dependency security check passed"
+    else
+        print_error "Found dependency vulnerabilities"
+        exit 1
+    fi
+else
+    print_status "pip-audit not available, skipping security checks"
+fi
+
+# Step 6: Test coverage
 print_status "Generating test coverage report..."
 python -m pytest test_passgithelper.py --cov=passgithelper --cov-report=term-missing
 print_success "Coverage report generated"
 
-# Step 6: Package building test
+# Step 7: Package building test
 print_status "Testing package build..."
 if python -m build --wheel > /dev/null 2>&1; then
     print_success "Package builds successfully"
