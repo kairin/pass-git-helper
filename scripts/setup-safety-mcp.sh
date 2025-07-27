@@ -108,13 +108,24 @@ print_status "Adding VS Code MCP settings..."
 # Check if settings.json exists and add MCP settings
 if [[ -f "$SETTINGS_JSON" ]]; then
     if command -v jq &> /dev/null; then
-        # Add MCP discovery settings if they don't exist
-        if ! jq -e '."chat.mcp.discovery.enabled"' "$SETTINGS_JSON" > /dev/null 2>&1; then
-            jq '."chat.mcp.discovery.enabled" = true' "$SETTINGS_JSON" > "${SETTINGS_JSON}.tmp" && mv "${SETTINGS_JSON}.tmp" "$SETTINGS_JSON"
-            print_success "Enabled MCP discovery in VS Code settings"
-        else
-            print_warning "MCP discovery already enabled in VS Code settings"
-        fi
+        # Add MCP configuration to VS Code settings.json
+        temp_settings=$(mktemp)
+        jq '. + {
+            "chat.mcp.discovery.enabled": true,
+            "mcp": {
+                "inputs": [],
+                "servers": {
+                    "safety-mcp": {
+                        "url": "https://mcp.safetycli.com/sse",
+                        "type": "sse",
+                        "headers": {
+                            "Authorization": "Bearer cbfb5d21-6a92-451d-8002-b4405bb6ca83"
+                        }
+                    }
+                }
+            }
+        }' "$SETTINGS_JSON" > "$temp_settings" && mv "$temp_settings" "$SETTINGS_JSON"
+        print_success "Added Safety MCP configuration to VS Code settings"
     else
         print_warning "jq not found. You'll need to manually add MCP settings to settings.json"
         cat << 'EOF'
@@ -122,19 +133,43 @@ if [[ -f "$SETTINGS_JSON" ]]; then
 Add this to your settings.json:
 
 {
-    "chat.mcp.discovery.enabled": true
+    "chat.mcp.discovery.enabled": true,
+    "mcp": {
+        "inputs": [],
+        "servers": {
+            "safety-mcp": {
+                "url": "https://mcp.safetycli.com/sse", 
+                "type": "sse",
+                "headers": {
+                    "Authorization": "Bearer cbfb5d21-6a92-451d-8002-b4405bb6ca83"
+                }
+            }
+        }
+    }
 }
 
 EOF
     fi
 else
-    # Create new settings.json with MCP settings
+    # Create new settings.json with complete MCP configuration
     cat > "$SETTINGS_JSON" << 'EOF'
 {
-    "chat.mcp.discovery.enabled": true
+    "chat.mcp.discovery.enabled": true,
+    "mcp": {
+        "inputs": [],
+        "servers": {
+            "safety-mcp": {
+                "url": "https://mcp.safetycli.com/sse",
+                "type": "sse", 
+                "headers": {
+                    "Authorization": "Bearer cbfb5d21-6a92-451d-8002-b4405bb6ca83"
+                }
+            }
+        }
+    }
 }
 EOF
-    print_success "Created new settings.json with MCP settings"
+    print_success "Created new settings.json with complete MCP configuration"
 fi
 
 print_status "Setting up Copilot instructions for Safety integration..."
