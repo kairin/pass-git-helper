@@ -410,7 +410,7 @@ def get_password(
         )
     password_extractor.configure(section)
 
-    username_extractor_name: str = section.get(
+    username_extractor_name = section.get(
         "username_extractor", fallback=_line_extractor_name
     ) or _line_extractor_name
     username_extractor = _username_extractors.get(username_extractor_name)
