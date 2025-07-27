@@ -22,7 +22,7 @@ from typing import Dict, IO, Mapping, Optional, Pattern, Sequence, Text
 import xdg.BaseDirectory
 
 
-__version__ = "3.3.0"
+__version__ = "3.3.1"
 
 LOGGER = logging.getLogger()
 CONFIG_FILE_NAME = "git-pass-mapping.ini"
@@ -103,7 +103,7 @@ def parse_mapping(mapping_file: Optional[IO]) -> configparser.ConfigParser:
             "Please create {config_file}".format(config_file=DEFAULT_CONFIG_FILE)
         )
     default_file = Path(xdg_config_dir) / CONFIG_FILE_NAME
-    LOGGER.debug("Parsing mapping file %s", mapping_file)
+    LOGGER.debug("Parsing mapping file %s", default_file)
     with default_file.open("r") as file_handle:
         return parse(file_handle)
 
@@ -405,7 +405,7 @@ def get_password(
         )
     password_extractor.configure(section)
 
-    username_extractor_name: str = section.get(  # type: ignore
+    username_extractor_name: str = section.get(
         "username_extractor", fallback=_line_extractor_name
     )
     username_extractor = _username_extractors.get(username_extractor_name)
