@@ -185,7 +185,7 @@ print_status "Running OSV-Scanner (comprehensive vulnerability scan)..."
 
 if command -v osv-scanner &> /dev/null; then
     print_status "Scanning with OSV-Scanner..."
-    if osv-scanner -r .; then
+    if osv-scanner scan source -r .; then
         OSV_SUCCESS=true
         print_success "OSV-Scanner completed successfully"
     else
@@ -382,7 +382,7 @@ fi
 print_status "Checking for OSV-Scanner..."
 OSV_SUCCESS=false
 if command -v osv-scanner &> /dev/null; then
-    if osv-scanner . --format table 2>/dev/null; then
+    if osv-scanner scan source . --format table 2>/dev/null; then
         OSV_SUCCESS=true
         print_success "OSV-Scanner completed"
     else

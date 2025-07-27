@@ -1,0 +1,27 @@
+# OSV-Scanner Configuration
+# See: https://google.github.io/osv-scanner/configuration/
+
+# Ignored vulnerabilities (for dev dependencies that don't affect runtime)
+[[IgnoredVulns]]
+id = "GHSA-x4c5-c7rf-jjgv"  # @octokit/endpoint (dev)
+reason = "Development dependency, does not affect Python runtime"
+
+[[IgnoredVulns]]
+id = "GHSA-h5c3-5r3r-rr8q"  # @octokit/plugin-paginate-rest (dev)
+reason = "Development dependency, does not affect Python runtime"
+
+[[IgnoredVulns]]
+id = "GHSA-rmvr-2pp2-xj38"  # @octokit/request (dev)
+reason = "Development dependency, does not affect Python runtime"
+
+[[IgnoredVulns]]
+id = "GHSA-xx4v-prfh-6cgc"  # @octokit/request-error (dev)
+reason = "Development dependency, does not affect Python runtime"
+
+[[IgnoredVulns]]
+id = "GHSA-v6h2-p8h4-qcjw"  # brace-expansion (dev)
+reason = "Development dependency, does not affect Python runtime"
+
+[[IgnoredVulns]]
+id = "GHSA-952p-6rrq-rcjv"  # micromatch (dev)
+reason = "Development dependency, does not affect Python runtime"
