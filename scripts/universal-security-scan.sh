@@ -116,19 +116,40 @@ print_status "Running bandit scan (source code security)..."
 
 if command -v bandit &> /dev/null; then
     print_status "Scanning source code with bandit..."
-    # Use -ll to only report medium/high severity issues
-    if bandit -r . -f txt -ll 2>/dev/null; then
-        BANDIT_SUCCESS=true
-        print_success "bandit scan completed successfully"
-    else
-        bandit_exit=$?
-        if [ $bandit_exit -eq 1 ]; then
-            print_warning "bandit found potential security issues (continuing...)"
-            BANDIT_SUCCESS=true  # Accept warnings for this type of project
+    
+    # Find Python files excluding virtual environments and common ignore paths
+    PYTHON_FILES=$(find . -name "*.py" \
+        -not -path "./.venv/*" \
+        -not -path "./venv/*" \
+        -not -path "./.env/*" \
+        -not -path "./env/*" \
+        -not -path "./.git/*" \
+        -not -path "./node_modules/*" \
+        -not -path "./__pycache__/*" \
+        -not -path "./.pytest_cache/*" \
+        -not -path "./build/*" \
+        -not -path "./dist/*" \
+        2>/dev/null)
+    
+    if [[ -n "$PYTHON_FILES" ]]; then
+        print_status "Found $(echo "$PYTHON_FILES" | wc -l) Python files to scan"
+        # Use -ll to only report medium/high severity issues, scan only project files
+        if echo "$PYTHON_FILES" | xargs bandit -f txt -ll 2>/dev/null; then
+            BANDIT_SUCCESS=true
+            print_success "bandit scan completed successfully"
         else
-            print_error "bandit failed to run properly"
-            TOTAL_ISSUES=$((TOTAL_ISSUES + 1))
+            bandit_exit=$?
+            if [ $bandit_exit -eq 1 ]; then
+                print_warning "bandit found potential security issues (continuing...)"
+                BANDIT_SUCCESS=true  # Accept warnings for this type of project
+            else
+                print_error "bandit failed to run properly"
+                TOTAL_ISSUES=$((TOTAL_ISSUES + 1))
+            fi
         fi
+    else
+        print_info "No Python files found to scan"
+        BANDIT_SUCCESS=true  # No files to scan is success
     fi
 else
     print_warning "bandit not available"
