@@ -532,68 +532,357 @@ EOF
 esac
 
 # ============================================================================
-# Step 5: Create README Security Section
+# Create Comprehensive Documentation
 # ============================================================================
-print_status "Creating security documentation..."
+
+print_status "Creating comprehensive security documentation..."
 
 cat > SECURITY_SETUP.md << EOF
-# Security Scanning Setup for $REPO_NAME
+# 🛡️ Universal Security Setup for $REPO_NAME
 
-## 🛡️ Automated Security Scanning
+## Overview
+This repository is equipped with enterprise-grade security scanning across multiple layers:
 
-This repository is configured with comprehensive security scanning using free, open-source tools:
+### 🔍 Detected Project Type: $PROJECT_TYPE
+**Supported Languages:** ${SUPPORTED_LANGUAGES[*]}
 
-### Tools Included:
-- **pip-audit**: Scans Python dependencies for known vulnerabilities
-- **bandit**: Analyzes source code for security issues
-- **GitHub Actions**: Automated scanning on every push/PR
+## 🚀 Security Tools Installed
 
-### Usage:
+### Universal Tools (All Projects):
+- **Semgrep**: Multi-language static analysis
+- **OSV-Scanner**: Google's vulnerability database scanner
+- **GitHub Actions**: Automated CI/CD security scanning
 
-\`\`\`bash
-# Run security scan locally
-./scripts/security-scan.sh
-
-# Install security tools
-pip install -r requirements-dev.txt
-
-# Manual scans
-pip-audit --desc --format=columns
-bandit -r . -f txt -ll
-\`\`\`
-
-### CI/CD Integration:
-- ✅ GitHub Actions workflow runs on every push
-- ✅ Pre-commit hooks catch issues early
-- ✅ No API keys or paid services required
-
-### Security Results:
-- 🔍 Dependencies scanned for vulnerabilities
-- 🔎 Source code analyzed for security patterns
-- 📊 Results available in GitHub Actions logs
-
-This setup provides enterprise-level security scanning completely free!
+### Project-Specific Tools:
 EOF
 
-print_success "Security documentation created"
+case $PROJECT_TYPE in
+    "python")
+        cat >> SECURITY_SETUP.md << EOF
+- **Safety**: Premium vulnerability scanning with API key
+- **pip-audit**: Dependency vulnerability scanner
+- **bandit**: Python source code security analyzer
+EOF
+        ;;
+    "nodejs")
+        cat >> SECURITY_SETUP.md << EOF
+- **npm audit**: Built-in dependency vulnerability scanner
+- **audit-ci**: CI/CD integration for npm audit
+EOF
+        ;;
+    "rust")
+        cat >> SECURITY_SETUP.md << EOF
+- **cargo audit**: Rust dependency vulnerability scanner
+EOF
+        ;;
+    "go")
+        cat >> SECURITY_SETUP.md << EOF
+- **gosec**: Go source code security analyzer
+EOF
+        ;;
+    "java")
+        cat >> SECURITY_SETUP.md << EOF
+- **Maven/Gradle**: Built-in dependency checking
+- **SpotBugs**: Static analysis (recommended)
+EOF
+        ;;
+    "dotnet")
+        cat >> SECURITY_SETUP.md << EOF
+- **security-scan**: .NET security scanner
+EOF
+        ;;
+esac
+
+cat >> SECURITY_SETUP.md << EOF
+
+## 🔧 Usage
+
+### Local Security Scanning:
+\`\`\`bash
+# Run comprehensive security scan
+./scripts/security-scan.sh
+
+# Install development dependencies
+EOF
+
+case $PROJECT_TYPE in
+    "python")
+        echo "pip install -r requirements-dev.txt" >> SECURITY_SETUP.md
+        ;;
+    "nodejs")
+        echo "npm install" >> SECURITY_SETUP.md
+        ;;
+    "rust")
+        echo "cargo build" >> SECURITY_SETUP.md
+        ;;
+    "go")
+        echo "go mod tidy" >> SECURITY_SETUP.md
+        ;;
+esac
+
+cat >> SECURITY_SETUP.md << EOF
+\`\`\`
+
+### Manual Tool Usage:
+\`\`\`bash
+EOF
+
+case $PROJECT_TYPE in
+    "python")
+        cat >> SECURITY_SETUP.md << EOF
+# Python-specific scans
+pip-audit --desc --format=columns
+bandit -r . -f txt -ll
+safety check --json
+
+# Universal scans
+semgrep --config=auto .
+osv-scanner --recursive .
+EOF
+        ;;
+    "nodejs")
+        cat >> SECURITY_SETUP.md << EOF
+# Node.js-specific scans
+npm audit
+audit-ci --config audit-ci.json
+
+# Universal scans
+semgrep --config=auto .
+osv-scanner --recursive .
+EOF
+        ;;
+    *)
+        cat >> SECURITY_SETUP.md << EOF
+# Universal scans (works for all projects)
+semgrep --config=auto .
+osv-scanner --recursive .
+EOF
+        ;;
+esac
+
+cat >> SECURITY_SETUP.md << EOF
+\`\`\`
+
+## 🚀 CI/CD Integration
+
+### GitHub Actions:
+- ✅ Automated scanning on every push/PR
+- ✅ Weekly scheduled security scans
+- ✅ Multi-language support
+- ✅ Security results artifacts
+- ✅ No manual intervention required
+
+### Pre-commit Hooks:
+- ✅ Fast security checks before commits
+- ✅ Catches issues early in development
+- ✅ Language-aware scanning
+
+## 🔑 Configuration
+
+### Required GitHub Secrets:
+- **SAFETY_API_KEY**: \`$SAFETY_API_KEY\` (Python projects)
+
+### Setup Instructions:
+1. Go to: Repository Settings → Secrets and Variables → Actions
+2. Add secret: \`SAFETY_API_KEY\`
+3. Value: \`$SAFETY_API_KEY\`
+
+## 📊 Security Coverage
+
+This setup provides:
+- 🔍 **Dependency Vulnerabilities**: Scans all package dependencies
+- 🔎 **Source Code Analysis**: Static analysis for security patterns
+- 🛡️ **Multi-language Support**: Works across different programming languages
+- 🚀 **Automated Scanning**: Runs automatically in CI/CD pipeline
+- � **Continuous Monitoring**: Weekly scheduled scans catch new vulnerabilities
+
+## 🚨 Emergency Response
+
+If security issues are found:
+1. Review the security scan results
+2. Prioritize by severity (Critical > High > Medium > Low)
+3. Update dependencies: \`pip install --upgrade package-name\`
+4. Apply code fixes for source code issues
+5. Re-run security scan to verify fixes
+
+## 🆘 Support
+
+For issues with security scanning:
+- Check GitHub Actions logs for detailed error messages
+- Run local scans for debugging: \`./scripts/security-scan.sh\`
+- Ensure all required tools are installed
+
+---
+
+🎉 **Your repository is now protected with enterprise-level security scanning!**
+EOF
+
+print_success "Created comprehensive SECURITY_SETUP.md"
 
 # ============================================================================
-# Summary
+# Create Quick Start Guide
 # ============================================================================
+
+cat > SECURITY_QUICKSTART.md << EOF
+# 🚀 Security Quick Start
+
+## Immediate Actions:
+
+\`\`\`bash
+# 1. Install security tools
+EOF
+
+case $PROJECT_TYPE in
+    "python")
+        echo "pip install -r requirements-dev.txt" >> SECURITY_QUICKSTART.md
+        ;;
+    "nodejs")
+        echo "npm install" >> SECURITY_QUICKSTART.md
+        ;;
+    *)
+        echo "# Follow your project's dependency installation process" >> SECURITY_QUICKSTART.md
+        ;;
+esac
+
+cat >> SECURITY_QUICKSTART.md << EOF
+
+# 2. Run security scan
+./scripts/security-scan.sh
+
+# 3. Set up GitHub secret (if using Python/Safety)
+# Go to: Settings → Secrets → Add: SAFETY_API_KEY = $SAFETY_API_KEY
+
+# 4. Commit and push
+git add .
+git commit -m "Add comprehensive security scanning"
+git push
+\`\`\`
+
+## ✅ Success Indicators:
+- Local security scan completes without critical issues
+- GitHub Actions workflow runs successfully
+- Pre-commit hooks activate on git commits
+
+## 🎯 Next Steps:
+- Review \`SECURITY_SETUP.md\` for detailed documentation
+- Configure any project-specific security settings
+- Schedule regular security reviews
+EOF
+
+print_success "Created SECURITY_QUICKSTART.md"
+
+# ============================================================================
+# Final Summary and Instructions
+# ============================================================================
+
 echo ""
 echo "🎉 Universal Security Setup Complete!"
-echo "══════════════════════════════════════════════════════════════════════"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
-echo "What was installed:"
-echo "  ✅ Universal security scanner (scripts/security-scan.sh)"
-echo "  ✅ GitHub Actions workflow (.github/workflows/security.yml)"
-echo "  ✅ Pre-commit hooks for git (.git/hooks/pre-commit)"
-echo "  ✅ Security tools requirements (requirements-dev.txt)"
-echo "  ✅ Documentation (SECURITY_SETUP.md)"
+
+print_success "✅ Project Type: $PROJECT_TYPE (${SUPPORTED_LANGUAGES[*]})"
+print_success "✅ Security scanner: scripts/security-scan.sh"
+print_success "✅ GitHub Actions: .github/workflows/security.yml"
+if [[ -d ".git" ]]; then
+    print_success "✅ Pre-commit hooks: .git/hooks/pre-commit"
+fi
+print_success "✅ Documentation: SECURITY_SETUP.md + SECURITY_QUICKSTART.md"
+
 echo ""
-echo "Next steps:"
-echo "  1. Run: pip install -r requirements-dev.txt"
-echo "  2. Test: ./scripts/security-scan.sh"
-echo "  3. Commit and push to trigger GitHub Actions"
+print_highlight "🛡️ Security Tools Installed:"
+
+# Show installed tools based on project type
+case $PROJECT_TYPE in
+    "python")
+        echo "  🐍 Python: Safety (premium) + pip-audit + bandit"
+        ;;
+    "nodejs")
+        echo "  📦 Node.js: npm audit + audit-ci"
+        ;;
+    "rust")
+        echo "  🦀 Rust: cargo audit"
+        ;;
+    "go")
+        echo "  🐹 Go: gosec"
+        ;;
+    "java")
+        echo "  ☕ Java: Maven/Gradle dependency checking"
+        ;;
+    "dotnet")
+        echo "  🔷 .NET: security-scan"
+        ;;
+esac
+
+echo "  🌐 Universal: Semgrep + OSV-Scanner + GitHub Actions"
+
 echo ""
-echo "🔐 Your repository now has enterprise-level security scanning for FREE!"
+print_highlight "🚀 Next Steps:"
+echo ""
+echo "1. 📋 Quick Start:"
+echo "   cat SECURITY_QUICKSTART.md"
+echo ""
+echo "2. 🔧 Install dependencies:"
+case $PROJECT_TYPE in
+    "python")
+        echo "   pip install -r requirements-dev.txt"
+        ;;
+    "nodejs")
+        echo "   npm install"
+        ;;
+    "rust")
+        echo "   cargo build"
+        ;;
+    "go")
+        echo "   go mod tidy"
+        ;;
+    *)
+        echo "   # Follow your project's dependency installation"
+        ;;
+esac
+echo ""
+echo "3. 🔍 Test security scanning:"
+echo "   ./scripts/security-scan.sh"
+echo ""
+echo "4. 🔑 Configure GitHub Secrets (for Python projects):"
+echo "   - Go to: Settings → Secrets and Variables → Actions"
+echo "   - Add: SAFETY_API_KEY = $SAFETY_API_KEY"
+echo ""
+echo "5. 📤 Commit and push:"
+echo "   git add ."
+echo "   git commit -m 'Add comprehensive security scanning'"
+echo "   git push"
+echo ""
+
+print_highlight "🎯 Features Enabled:"
+echo "  ✅ Multi-layer security scanning (5+ tools)"
+echo "  ✅ Language-specific vulnerability detection"
+echo "  ✅ Automated CI/CD integration"
+echo "  ✅ Pre-commit security hooks"
+echo "  ✅ Weekly scheduled scans"
+echo "  ✅ Security results artifacts"
+echo "  ✅ Universal repo compatibility"
+
+echo ""
+if [[ "$PROJECT_TYPE" == "python" ]]; then
+    print_info "� Premium Features: Safety Firewall + MCP integration configured"
+    echo "   Your Safety API key provides enterprise-grade protection!"
+fi
+
+echo ""
+echo -e "${CYAN}🔒 Your repository now has enterprise-level security scanning!${NC}"
+echo -e "${GREEN}🌟 This setup works across ALL your repositories!${NC}"
+echo ""
+
+# Display tool availability summary
+print_highlight "🔧 Tool Availability Summary:"
+for tool in safety pip-audit bandit semgrep osv-scanner npm cargo go; do
+    if command -v "$tool" &> /dev/null; then
+        echo "  ✅ $tool"
+    else
+        echo "  ❌ $tool (not installed/available)"
+    fi
+done
+
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo "Setup completed successfully! Check SECURITY_QUICKSTART.md for next steps."

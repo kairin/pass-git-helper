@@ -1,0 +1,88 @@
+name: 🔒 Security Scan
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master ]
+  schedule:
+    # Run weekly security scans
+    - cron: '0 6 * * 1'
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    name: Multi-Tool Security Analysis
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          
+      - name: 📦 Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          
+      - name: 🦀 Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+        if: hashFiles('Cargo.toml') != ''
+        
+      - name: 🐹 Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+        if: hashFiles('go.mod') != ''
+        
+      - name: ☕ Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+        if: hashFiles('pom.xml', 'build.gradle', 'build.gradle.kts') != ''
+        
+      - name: 🔧 Install security tools
+        run: |
+          # Python tools
+          pip install --user pip-audit bandit safety semgrep
+          
+          # Node.js tools
+          if [[ -f "package.json" ]]; then
+            npm install -g audit-ci
+          fi
+          
+          # Rust tools
+          if [[ -f "Cargo.toml" ]]; then
+            cargo install cargo-audit
+          fi
+          
+          # Go tools
+          if [[ -f "go.mod" ]]; then
+            go install github.com/securecodewarrior/gosec/v2/cmd/gosec@latest
+          fi
+          
+          # Universal tools
+          go install github.com/google/osv-scanner/cmd/osv-scanner@latest || echo "Failed to install osv-scanner"
+          
+      - name: 🛡️ Run universal security scanner
+        env:
+          SAFETY_API_KEY: ${{ secrets.SAFETY_API_KEY }}
+        run: |
+          curl -sSL "https://raw.githubusercontent.com/kairin/pass-git-helper/main/scripts/universal-security-scan.sh" | bash
+          
+      - name: 📊 Upload security results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: security-scan-results
+          path: |
+            security-report.txt
+            security-summary.json
+          retention-days: 30
