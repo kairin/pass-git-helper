@@ -1,8 +1,0 @@
-# OSV-Scanner ignore file
-# Files to skip during scanning to avoid parsing errors
-
-# Skip requirements-dev.txt due to setup.cfg dependency resolution issues
-requirements-dev.txt
-
-# Skip setup.cfg to avoid dependency parsing conflicts
-setup.cfg
